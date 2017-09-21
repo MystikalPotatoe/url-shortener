@@ -16,14 +16,6 @@ app.set('view engine','ejs');
 
 //db.connect()
 
-MongoClient.connect(url, (err,db) => {
-    if(err) {
-        console.log('Failed to make a connection');
-        console.log(err);
-        process.exit(1);
-    }
-    
-    routes(app,db);
-});
+routes(app,db);
 
 module.exports = app;
