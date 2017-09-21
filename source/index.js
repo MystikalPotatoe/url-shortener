@@ -11,6 +11,8 @@ app.use(express.static('public'));
 
 app.set('view engine','ejs');
 
+//db.connect()
+
 MongoClient.connect(url, (err,db) => {
     if(err) {
         console.log('Failed to make a connection');
