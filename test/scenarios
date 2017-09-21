@@ -1,0 +1,21 @@
+Questions
+ - do I test for use of things like the type of views engine i'm using?
+ - how to test rect components?
+ 
+
+user goes to home page
+    given 
+user submits valid url
+    then url validation returns success
+        create regex validation module
+    then generate short-url
+    then store url & short-url pair
+    then return short-url
+user submits invalid url
+    then front-end error message to say invalid url (validation returns error)
+    then no short-url generated
+    then nothing stored
+user accesses short-url
+    then database queried to find short url
+    then related url returned
+    then re-direct to returned url
