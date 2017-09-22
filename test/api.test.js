@@ -12,7 +12,8 @@ const app = require('express')(),
 //   console.log('200 done');
 // });
 
-
+//db.connect()
+DB.connect(process.env.MONGO_URI,() => {console.log("Database connection open")});
 
 routes(app,DB.getDB());
 
