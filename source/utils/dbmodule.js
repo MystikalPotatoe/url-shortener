@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var async = require('async');
 var Promise = require('bluebird');
-var fixtures = require('../tests/fixtures/model-comments');
+var fixtures = require('../../test/testdata');
 
 var state = {
     db: null,
@@ -16,18 +16,22 @@ var PRODUCTION_URI = 'mongodb://127.0.0.1:27017/production'
 exports.MODE_TEST = 'mode_test';
 exports.MODE_PRODUCTION = 'mode_production';
 
-exports.connect = function(mode,done) {
+exports.connect = function(url,done) {
+    // change 'url' to mode if using this for multiple environments
+    
     if(state.db) {
         return done();
     }
     
-    var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI;
+    //only needed for multiple environments
+    //var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI;
     
-    MongoClient.connect(uri, function(err,db) {
+    MongoClient.connect(url, function(err,db) {
         console.log('DB connected');
         if(err) return done(err);
         state.db = db;
-        state.mode = mode;
+        // use mode if multiple environments
+        //state.mode = mode;
         done();
     });
 };
@@ -76,14 +80,6 @@ exports.dropify = function() {
     );
 };
 
-exports.droptest = function(data, cb) {
-    if(!state.db) return function() {console.log('DB already up')};
-    state.db.collection('comments').drop(function() {
-        console.log('Successfully dropped');
-    });
-    console.log('got to end eventually');
-};
-
 exports.fixtures = function(data,done) {
     var db = state.db;
     if(!db) {
@@ -92,18 +88,18 @@ exports.fixtures = function(data,done) {
     
     var names = Object.keys(data.collections);
     console.log(names);
-    db.createCollection(names[0], function(err, collection) {
-        console.log('Collection created');
-        if(err) return done(err);
-        collection.insertMany(data.collections[names[0]],done);
-    });
-    // async.each(names, function(name, cb) {
-    //     db.createCollection(name, function(err, collection) {
-    //         console.log('Collection created');
-    //         if(err) return cb(err);
-    //         collection.insertMany(data.collections[name],cb);
-    //     });
-    // },done);
+    // db.createCollection(names[0], function(err, collection) {
+    //     console.log('Collection created');
+    //     if(err) return done(err);
+    //     collection.insertMany(data.collections[names[0]],done);
+    // });
+    async.each(names, function(name, cb) {
+        db.createCollection(name, function(err, collection) {
+            console.log('Collection created');
+            if(err) return cb(err);
+            collection.insertMany(data.collections[name],cb);
+        });
+    },done);
     console.log('got to fixture end');
 };
 

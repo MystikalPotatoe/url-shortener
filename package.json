@@ -26,7 +26,6 @@
     "babel-preset-react": "^6.23.0",
     "babel-register": "^6.26.0",
     "blue-tape": "^1.0.0",
-    "supertest": "^3.0.0",
-    "tape": "^4.8.0"
+    "supertest": "^3.0.0"
   }
 }

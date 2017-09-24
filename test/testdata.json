@@ -1,0 +1,18 @@
+{
+  "collections": {
+    "urls": [
+      {
+        "shorturl": 1,
+        "longurl": "www.google.com"
+      },
+      {
+        "shorturl": 2,
+        "longurl": "www.netflix.com"
+      },
+      {
+        "shorturl": 3,
+        "longurl": "www.facebook.com"
+      }
+    ]
+  }
+}
