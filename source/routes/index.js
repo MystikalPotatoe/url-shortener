@@ -48,7 +48,7 @@ module.exports = function (app, db) {
 
       console.log(req.body.myUrl);
       //validate content
-      if(urlValidator(req.body.myUrl)) res.send({"Error":"Invalid URL; must be of format http://www.example.com"});
+      if(!urlValidator(req.body.myUrl)) res.send({"Error":"Invalid URL; must be of format http://www.example.com"});
       
       // get largest shortId value     
       db.collection('urls').find().sort({shorturl: -1}).limit(1).toArray((err,docs) => {

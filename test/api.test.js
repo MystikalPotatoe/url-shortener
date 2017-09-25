@@ -8,11 +8,7 @@ const app = require('express')(),
       Promise = require('bluebird');
 
 //Temporary Test App for checking valid test structure
-app.get('/',(req,res) => {
-  //const db = DB.getDB();
-  res.status(200).json({ name: 'tobi' });
-  console.log('200 done');
-});
+// removed.....
 
 //db.connect()
 const setup = test;
@@ -25,6 +21,7 @@ setup('Preparing DB',(t) => {
 //routes(app,DB.getDB());
 
 test('Correct users returned', function (t) {
+  routes(app,DB.getDB());
   DB.dropify().then(DB.fixify).then(() => {
     request(app)
       .get('/')
@@ -33,17 +30,34 @@ test('Correct users returned', function (t) {
         if (err) console.log('broken');
         const db = DB.getDB();
         const expected = 3;
-        db.collection('comments').find().toArray((err,docs) => {
+        db.collection('urls').find().toArray((err,docs) => {
           const actual = docs.length;
-          t.equal(actual,expected,'both should be 3 as there are three entries in the test collection "comments"');
+          t.equal(actual,expected,'both should be 3 as there are three entries in the test collection "urls"');
         });
+        console.log(res);
+        t.equal(res.body.result,4,"test data had 3 entries, so the next shorturl number should be 4");
         // t.same(res.body,{result:3},'testing response content to be {result: 3}');
         t.end();
       });
   });
 });
 
-teardown('Clsoing DB', (t) => {
+test('Add new url', function (t) {
+  routes(app,DB.getDB());
+  DB.dropify().then(DB.fixify).then(() => {
+    request(app)
+      .get('/new/http://www.medium.com')
+      .expect(200)
+      .end(function (err, res) {
+        const expected = 'http://www.medium.com';
+        const actual = res.body.longurl;
+        t.equal(actual,expected,"expecting ");
+        t.end();
+      });
+  });
+});
+
+teardown('Closing DB', (t) => {
   DB.close(() => {t.end()});
 });
 

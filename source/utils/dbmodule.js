@@ -56,16 +56,20 @@ exports.getDB = function() {
 
 exports.drop = function(done) {
     if(!state.db) return done();
-    state.db.collections(function(err,collections) {
-        console.log('dropping');
-        async.each(collections, function(collection, cb) {
-            if(collection.collectionName.indexOf('system')===0) {
-                return cb();
-            }
-            collection.deleteOne(cb);
-            console.log('dropped - '+collection.collectionName);
-        },done);
-    });
+    
+    //USE THIS IF DROPPING ALL COLLECTIONS IN A DATABSE
+    // state.db.collections(function(err,collections) {
+    //     console.log('dropping');
+    //     async.each(collections, function(collection, cb) {
+    //         if(collection.collectionName.indexOf('system')===0) {
+    //             return cb();
+    //         }
+    //         collection.deleteOne(cb);
+    //         console.log('dropped - '+collection.collectionName);
+    //     },done);
+    // });
+    
+    state.db.collection('urls').drop(done);
     console.log('got to end eventually');
 };
 

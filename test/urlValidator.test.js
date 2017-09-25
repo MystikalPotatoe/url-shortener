@@ -12,6 +12,10 @@ test('urlValidator checks if a string input meets the format "https://www.exampl
     const expectedPositiveOutput = true;
     const actualPositiveOutput = urlValidator('https://www.example.com');
     t.equal(actualPositiveOutput,expectedPositiveOutput,'urlValidator should return Boolean("true") for input of "https://www.example.com"');
+
+    const expectedPositiveOutput2 = true;
+    const actualPositiveOutput2 = urlValidator('http://www.medium.com');
+    t.equal(actualPositiveOutput2,expectedPositiveOutput2,'urlValidator should return Boolean("true") for input of "http://www.medium.com"');
     
     t.end();
 });
