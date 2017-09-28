@@ -44,31 +44,35 @@ module.exports = function (app, db) {
   
   
   
-  app.get('/new', (req,res) => {
+  app.get('/new', (req,res,next) => {
 
       console.log(req.body.myUrl);
       //validate content
-      if(!urlValidator(req.body.myUrl)) res.send({"Error":"Invalid URL; must be of format http://www.example.com"});
+      if(!urlValidator(req.body.myUrl)) {
+        
+        res.send({"Error":"Invalid URL; must be of format http://www.example.com"});
+        
+      } else {
       
-      // get largest shortId value     
-      db.collection('urls').find().sort({shorturl: -1}).limit(1).toArray((err,docs) => {
-        console.log('last object added: '+ JSON.stringify(docs[0]));
-        
-        //set next Id to increment from the largest Id 
-        let newId = docs[0].shorturl+1;
-        
-        //create new database document, storing short and complete url
-        let newitem = {shorturl: newId, longurl: req.body.myUrl};
-        
-        //insert new document
-        db.collection('urls').insertOne(newitem, (err, result) => {
-          if(err) return alert(err);
+        // get largest shortId value     
+        db.collection('urls').find().sort({shorturl: -1}).limit(1).toArray((err,docs) => {
+          console.log('last object added: '+ JSON.stringify(docs[0]));
           
-          //on success return json object that was stored in the API response
-          res.send(newitem);
+          //set next Id to increment from the largest Id 
+          let newId = docs[0].shorturl+1;
+          
+          //create new database document, storing short and complete url
+          let newitem = {shorturl: newId, longurl: req.body.myUrl};
+          
+          //insert new document
+          db.collection('urls').insertOne(newitem, (err, result) => {
+            if(err) return alert(err);
+            
+            //on success return json object that was stored in the API response
+            res.send(newitem);
+          });
         });
-      });
-      
+      }
   });
   
   app.get('/:shortId', (req,res) => {
