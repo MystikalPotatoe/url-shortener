@@ -3,6 +3,12 @@ import urlExtractor from '../urlExtractor';
       //appHome = require('./react/url-input');
 
 import urlValidator from '../urlValidator';
+import template from '../react/template';
+import { renderToString } from 'react-dom/server';
+import miniApp from '../react';
+import React from 'react';
+
+const MiniApp = miniApp({ React });
 
 
 module.exports = function (app, db) {
@@ -30,14 +36,17 @@ module.exports = function (app, db) {
   });
   
   app.get('/', (req,res) => {
-      console.log('step 1');
       db.collection('urls').find().sort({shorturl: -1}).limit(1).toArray((err,docs) => {
         if(err) console.log('An error occurred: '+ err);
         if(!docs) res.send({result: "No documents in database"});
-        console.log(typeof docs[0]);
         console.log(docs[0]);
-        res.send({result: docs[0].shorturl+1});
       });
+      res.send(
+          template({
+            body: renderToString(<MiniApp />),
+            title: 'Hello World Test'
+          })
+      );
       //let body = appHome.home();
       //res.render('layout/basic',{body:body});
   });

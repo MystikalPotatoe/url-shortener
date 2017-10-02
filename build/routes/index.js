@@ -1,7 +1,5 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _urlExtractor = require('../urlExtractor');
 
 var _urlExtractor2 = _interopRequireDefault(_urlExtractor);
@@ -10,10 +8,26 @@ var _urlValidator = require('../urlValidator');
 
 var _urlValidator2 = _interopRequireDefault(_urlValidator);
 
+var _template = require('../react/template');
+
+var _template2 = _interopRequireDefault(_template);
+
+var _server = require('react-dom/server');
+
+var _react = require('../react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _react3 = require('react');
+
+var _react4 = _interopRequireDefault(_react3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bodyParser = require('body-parser');
 //appHome = require('./react/url-input');
+
+var MiniApp = (0, _react2.default)({ React: _react4.default });
 
 module.exports = function (app, db) {
 
@@ -37,42 +51,47 @@ module.exports = function (app, db) {
   });
 
   app.get('/', function (req, res) {
-    console.log('step 1');
     db.collection('urls').find().sort({ shorturl: -1 }).limit(1).toArray(function (err, docs) {
       if (err) console.log('An error occurred: ' + err);
       if (!docs) res.send({ result: "No documents in database" });
-      console.log(_typeof(docs[0]));
       console.log(docs[0]);
-      res.send({ result: docs[0].shorturl + 1 });
     });
+    res.send((0, _template2.default)({
+      body: (0, _server.renderToString)(_react4.default.createElement(MiniApp, null)),
+      title: 'Hello World Test'
+    }));
     //let body = appHome.home();
     //res.render('layout/basic',{body:body});
   });
 
-  app.get('/new', function (req, res) {
+  app.get('/new', function (req, res, next) {
 
     console.log(req.body.myUrl);
     //validate content
-    if ((0, _urlValidator2.default)(req.body.myUrl)) res.send({ "Error": "Invalid URL; must be of format http://www.example.com" });
+    if (!(0, _urlValidator2.default)(req.body.myUrl)) {
 
-    // get largest shortId value     
-    db.collection('urls').find().sort({ shorturl: -1 }).limit(1).toArray(function (err, docs) {
-      console.log('last object added: ' + JSON.stringify(docs[0]));
+      res.send({ "Error": "Invalid URL; must be of format http://www.example.com" });
+    } else {
 
-      //set next Id to increment from the largest Id 
-      var newId = docs[0].shorturl + 1;
+      // get largest shortId value     
+      db.collection('urls').find().sort({ shorturl: -1 }).limit(1).toArray(function (err, docs) {
+        console.log('last object added: ' + JSON.stringify(docs[0]));
 
-      //create new database document, storing short and complete url
-      var newitem = { shorturl: newId, longurl: req.body.myUrl };
+        //set next Id to increment from the largest Id 
+        var newId = docs[0].shorturl + 1;
 
-      //insert new document
-      db.collection('urls').insertOne(newitem, function (err, result) {
-        if (err) return alert(err);
+        //create new database document, storing short and complete url
+        var newitem = { shorturl: newId, longurl: req.body.myUrl };
 
-        //on success return json object that was stored in the API response
-        res.send(newitem);
+        //insert new document
+        db.collection('urls').insertOne(newitem, function (err, result) {
+          if (err) return alert(err);
+
+          //on success return json object that was stored in the API response
+          res.send(newitem);
+        });
       });
-    });
+    }
   });
 
   app.get('/:shortId', function (req, res) {
@@ -100,36 +119,3 @@ module.exports = function (app, db) {
 
   return app;
 };
-
-// app.route('/')
-//     .get((req,res) => {
-//         let body = appHome.home();
-//         res.render('layout/basic',{body:body});
-//     })
-//     .post((req,res) => {
-//         let validationResult = urlValidator(req.body.userlink);
-//         if (req.body.userlink !== validationResult) {
-//             res.end(validationResult);
-//         } 
-//         mongo.connect(url, (err,db) => {
-//             if(err) throw err;
-//             console.log('successful server connection');
-//             let links = db.collection('links');
-//             links.insert({
-//                 userlink: req.body.userlink,
-//                 shortlink: 'the system generated short link'
-//             });
-//             db.close();
-//         });
-//         let body = appHome.result(req.body.userlink);
-//         res.render('layout/basic',{body:body});
-//     });
-
-// app.get('/link/:id', (req,res) => {
-//     console.log(req.params.id);
-//     /*
-//     mongo.connect(url, (err,db) => {
-//         if(err) throw err;
-
-//     }); */
-// });
