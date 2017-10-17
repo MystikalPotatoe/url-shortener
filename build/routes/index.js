@@ -56,6 +56,7 @@ module.exports = function (app, db) {
       if (!docs) res.send({ result: "No documents in database" });
       console.log(docs[0]);
     });
+    res.set('Content-Type', 'text/html');
     res.send((0, _template2.default)({
       body: (0, _server.renderToString)(_react4.default.createElement(MiniApp, null)),
       title: 'Hello World Test'

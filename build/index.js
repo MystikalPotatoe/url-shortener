@@ -1,8 +1,5 @@
 'use strict';
 
-//this was done in a different branch
-//how weird!!!
-
 var express = require('express'),
     DB = require('./utils/dbmodule.js'),
     url = process.env.MONGO_URI,
@@ -11,13 +8,15 @@ var express = require('express'),
 
 app.use(express.static('public'));
 
-app.set('view engine', 'ejs');
+// Ignore view engine set because we are using react server rendering
+// app.set('view engine','ejs');
 
-//db.connect()
+//Connecting to Database instance
 DB.connect(url, function () {
       console.log("Database connection open");
 });
 
+//Set routes for the application
 routes(app, DB.getDB());
 
 module.exports = app;

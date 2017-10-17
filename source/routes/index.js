@@ -41,6 +41,7 @@ module.exports = function (app, db) {
         if(!docs) res.send({result: "No documents in database"});
         console.log(docs[0]);
       });
+      res.set('Content-Type', 'text/html');
       res.send(
           template({
             body: renderToString(<MiniApp />),
