@@ -64,7 +64,6 @@ module.exports = function (app, db) {
       
         // get largest shortId value     
         db.collection('urls').find().sort({shorturl: -1}).limit(1).toArray((err,docs) => {
-          console.log('last object added: '+ JSON.stringify(docs[0]));
           
           //set next Id to increment from the largest Id 
           let newId = docs[0].shorturl+1;
@@ -84,26 +83,31 @@ module.exports = function (app, db) {
   });
   
   app.get('/:shortId', (req,res) => {
-      console.log('shortId - '+ req.params.shortId );
       
       //convert short Id provided from string to number 
       let shortnum = parseInt(req.params.shortId, 10);
       
       //find entry in database with the provided short id
       db.collection('urls').find({shorturl: shortnum}).toArray((err, doc) => {
-        console.log('made the search and array bit');
         
         //database error response
         if(err) return err;
         
         //response if there is no url with that short Id reference
-        if(!doc) res.send({"Error":"No link with short url reference - '"+shortnum+"'."});
+        if(doc.length === 0) {
+          
+          res.send({"Error":"No link with short url reference - '"+req.params.shortId+"'."});
+      
+        } else {
         
-        console.log(doc);
-        
-        //redirect to url with that short Id reference
-        res.redirect(doc[0].longurl);
+          //redirect to url with that short Id reference
+          res.redirect(doc[0].longurl);
+        }
       });
+  });
+  
+  app.use((req,res) => {
+    res.send(404);
   });
   
   // return app;

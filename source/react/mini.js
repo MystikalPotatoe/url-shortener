@@ -3,6 +3,7 @@ import React from 'react';
 import Content from './main-container';
 import Heading from './heading';
 import Intro from './introduction';
+import Instructions from './instructions';
 
 const outputFactory = function () {
   
@@ -10,6 +11,7 @@ const outputFactory = function () {
     <Content>
       <Heading />
       <Intro />
+      <Instructions />
     </Content>
   );
 };
