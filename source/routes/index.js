@@ -3,12 +3,12 @@ import urlExtractor from '../urlExtractor';
       //appHome = require('./react/url-input');
 
 import urlValidator from '../urlValidator';
-import template from '../react/template';
 import { renderToString } from 'react-dom/server';
-import miniApp from '../react';
+import MiniApp from '../react/mini';
 import React from 'react';
+import path from 'path';
 
-const MiniApp = miniApp({ React });
+// const MiniApp = miniApp({ React });
 
 
 module.exports = function (app, db) {
@@ -16,6 +16,9 @@ module.exports = function (app, db) {
   
   
   app.use(bodyParser.urlencoded({extended:true}));
+  // Ignore view engine set because we are using react server rendering
+  app.set('view engine','ejs');
+  app.set('views',path.join(process.cwd(),'views'));
   
   app.use((req,res,next) => {
     
@@ -29,9 +32,9 @@ module.exports = function (app, db) {
     req.body.myUrl = output.url;
     
 
-    console.log('myUrl - '+req.body.myUrl);
-    console.log('req.url - '+req.url);
-    console.log('new path - '+req.path);
+    // console.log('myUrl - '+req.body.myUrl);
+    // console.log('req.url - '+req.url);
+    // console.log('new path - '+req.path);
     next();
   });
   
@@ -39,17 +42,12 @@ module.exports = function (app, db) {
       db.collection('urls').find().sort({shorturl: -1}).limit(1).toArray((err,docs) => {
         if(err) console.log('An error occurred: '+ err);
         if(!docs) res.send({result: "No documents in database"});
-        console.log(docs[0]);
+        // console.log(docs[0]);
       });
       res.set('Content-Type', 'text/html');
-      res.send(
-          template({
-            body: renderToString(<MiniApp />),
-            title: 'Hello World Test'
-          })
-      );
-      //let body = appHome.home();
-      //res.render('layout/basic',{body:body});
+      let body = renderToString(<MiniApp />);
+      let title = "URL Shortener";
+      res.render('layout/template',{body:body,title:title});
   });
   
   
@@ -108,6 +106,6 @@ module.exports = function (app, db) {
       });
   });
   
-  return app;
+  // return app;
   
 };

@@ -6,26 +6,35 @@
   "scripts": {
     "build": "babel source/ -d build/",
     "start": "npm run build && node build/server",
-    "test": "mocha --compilers js:babel-register"
+    "test": "tape -r bable-register test/**/*.js",
+    "start-dev": "nodemon index.js --exec babel-node"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "body-parser": "^1.17.1",
-    "ejs": "^2.5.6",
-    "express": "^4.15.2",
-    "mongodb": "^2.2.25",
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2"
+    "async": "^2.5.0",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "mongodb": "^2.2.33",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "blue-tape": "^1.0.0",
-    "supertest": "^3.0.0"
+    "enzyme": "^3.1.0",
+    "enzyme-adapter-react-16": "^1.0.2",
+    "extend-tape": "^1.2.0",
+    "faucet": "0.0.1",
+    "nodemon": "^1.12.1",
+    "react-test-renderer": "^16.0.0",
+    "supertest": "^3.0.0",
+    "tape": "^4.8.0"
   }
 }

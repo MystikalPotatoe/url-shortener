@@ -14,20 +14,21 @@ var _template2 = _interopRequireDefault(_template);
 
 var _server = require('react-dom/server');
 
-var _react = require('../react');
+var _mini = require('../react/mini');
+
+var _mini2 = _interopRequireDefault(_mini);
+
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
-
-var _react3 = require('react');
-
-var _react4 = _interopRequireDefault(_react3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bodyParser = require('body-parser');
 //appHome = require('./react/url-input');
 
-var MiniApp = (0, _react2.default)({ React: _react4.default });
+// const MiniApp = miniApp({ React });
+
 
 module.exports = function (app, db) {
 
@@ -44,9 +45,9 @@ module.exports = function (app, db) {
     // store extracted url in request object so that it can be used in routes....?
     req.body.myUrl = output.url;
 
-    console.log('myUrl - ' + req.body.myUrl);
-    console.log('req.url - ' + req.url);
-    console.log('new path - ' + req.path);
+    // console.log('myUrl - '+req.body.myUrl);
+    // console.log('req.url - '+req.url);
+    // console.log('new path - '+req.path);
     next();
   });
 
@@ -54,15 +55,12 @@ module.exports = function (app, db) {
     db.collection('urls').find().sort({ shorturl: -1 }).limit(1).toArray(function (err, docs) {
       if (err) console.log('An error occurred: ' + err);
       if (!docs) res.send({ result: "No documents in database" });
-      console.log(docs[0]);
+      // console.log(docs[0]);
     });
     res.set('Content-Type', 'text/html');
-    res.send((0, _template2.default)({
-      body: (0, _server.renderToString)(_react4.default.createElement(MiniApp, null)),
-      title: 'Hello World Test'
-    }));
-    //let body = appHome.home();
-    //res.render('layout/basic',{body:body});
+    var body = (0, _server.renderToString)(_react2.default.createElement(_mini2.default, null));
+    var title = "URL Shortener";
+    res.render('layout/template', { body: body, title: title });
   });
 
   app.get('/new', function (req, res, next) {

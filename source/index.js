@@ -4,18 +4,19 @@ const express = require('express'),
       DB = require('./utils/dbmodule.js'),
       url = process.env.MONGO_URI,
       app = express(),
+      path = require('path'),
       routes = require('./routes');
 
       
 app.use(express.static('public'));
 
-// Ignore view engine set because we are using react server rendering
-// app.set('view engine','ejs');
-
 //Connecting to Database instance
-DB.connect(url,() => {console.log("Database connection open")});
+DB.connect(url,() => {
+      console.log("Database connection open");
+      routes(app,DB.getDB());
+});
 
 //Set routes for the application
-routes(app,DB.getDB());
+// routes(app,DB.getDB());
 
 module.exports = app;
